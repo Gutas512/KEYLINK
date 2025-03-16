@@ -12,13 +12,14 @@
 <body>
     <!-- NAVBAR -->
     <div class="navbar">
-        <div class="navbar-left">
-            <span class="user-name">Olá, {{ user.username }}</span>
-            <form method="post" action="{% url 'logout' %}">
-                {% csrf_token %}
-                <button type="submit" class="logout-btn">Sair</button>
-            </form>
-        </div>
+<div class="navbar-left">
+    <span class="user-name">Olá, {{ funcionario.nome_funcionario }}</span>
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="logout-btn">Sair</button>
+    </form>
+</div>
+
         <div class="navbar-right">
             <img src="{% static 'img/logo.png' %}" alt="Logo KeyLink" class="logo">
         </div>

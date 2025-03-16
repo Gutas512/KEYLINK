@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Excluir Funcionário</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Excluir Funcionário</h1>
+
+        <p>Tem certeza que deseja excluir {{ funcionario.nome_funcionario }}?</p>
+
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" class="delete-btn">Excluir</button>
+            <a href="{% url 'listar_funcionarios' %}" class="cancel-btn">Cancelar</a>
+        </form>
+
+    </div>
+</body>
+</html>

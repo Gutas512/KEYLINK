@@ -18,16 +18,18 @@
         <div class="login-right">
             <div class="login-form">
                 <h3>Login</h3>
-                <form method="post">
-                    {% csrf_token %}
-                    <input type="text" name="username" placeholder="Usuário" required>
-                    <input type="password" name="password" placeholder="Senha" required>
-                    <button type="submit">Entrar</button>
-                </form>
+<form method="POST">
+    {% csrf_token %}
+    <input type="text" name="username" placeholder="Usuário" required>
+    <input type="password" name="password" placeholder="Senha" required>
+    <button type="submit">Entrar</button>
+</form>
 
-                {% if error %}
-                    <p style="color: red;">{{ error }}</p>
-                {% endif %}
+
+{% if error %}
+    <p style="color: red;">{{ error }}</p>
+{% endif %}
+
 
                 <a href="#" class="forgot-password">Esqueceu sua senha?</a>
             </div>

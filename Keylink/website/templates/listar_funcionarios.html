@@ -1,11 +1,63 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <title>Lista de Funcionários</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <h1>Lista de Funcionários</h1>
-    <p>Em breve, você verá os dados aqui!</p>
+   <!-- NAVBAR -->
+    <div class="navbar">
+        <div class="navbar-left">
+            <span class="user-name">Olá, {{ funcionario.nome_funcionario }}</span>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">Sair</button>
+            </form>
+        </div>
+        <div class="navbar-right">
+            <img src="{% static 'img/logo.png' %}" alt="Logo KeyLink" class="logo">
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Lista de Funcionários</h1>
+
+
+        <a href="{% url 'index' %}" class="back-button">Voltar</a>
+
+        <a href="{% url 'adicionar_funcionario' %}" class="add-button">Adicionar Novo Funcionário</a>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Cargo</th>
+                    <th>Usuário</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for funcionario in funcionarios %}
+                <tr>
+                    <td>{{ funcionario.id }}</td>
+                    <td>{{ funcionario.nome_funcionario }}</td>
+                    <td>{{ funcionario.funcao_funcionario }}</td>
+                    <td>{{ funcionario.usuario_funcionario }}</td>
+                    <td class="actions">
+                        <a href="{% url 'editar_funcionario' funcionario.id %}" class="edit-btn">Editar</a>
+                        <a href="{% url 'excluir_funcionario' funcionario.id %}" class="delete-btn">Excluir</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">Nenhum funcionário cadastrado.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
