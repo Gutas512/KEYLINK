@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-left">
+            <div class="login-left-content">
+                <h2>Bem-vindo ao Keylink!</h2>
+                <p>Faça login para continuar.</p>
+            </div>
+        </div>
+        <div class="login-right">
+            <div class="login-form">
+                <h3>Login</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="text" name="username" placeholder="Usuário" required>
+                    <input type="password" name="password" placeholder="Senha" required>
+                    <button type="submit">Entrar</button>
+                </form>
+                <a href="#" class="forgot-password">Esqueceu sua senha?</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
