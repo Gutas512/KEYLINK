@@ -1,0 +1,92 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 0;
+}
+
+/* Navbar superior */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #003366;
+    padding: 15px 30px;
+    color: white;
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-name {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.logout-btn {
+    background-color: #cc0000;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-weight: bold;
+}
+
+.logout-btn:hover {
+    background-color: #a30000;
+}
+
+.navbar-right .logo {
+    height: 40px;
+}
+
+/* Container principal */
+.container {
+    max-width: 1000px;
+    margin: 60px auto;
+    text-align: center;
+    padding: 30px;
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Cards de menu */
+.menu-opcoes {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    gap: 30px;
+}
+
+.card {
+    width: 260px;
+    padding: 25px;
+    background-color: #0059b3;
+    color: white;
+    text-decoration: none;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: 0.3s ease;
+}
+
+.card:hover {
+    background-color: #004080;
+    transform: scale(1.05);
+}
+
+.card h2 {
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.card p {
+    font-size: 14px;
+    color: #e0e0e0;
+}

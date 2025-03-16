@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KeyLink - Página Inicial</title>
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+</head>
+<body>
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <div class="navbar-left">
+            <span class="user-name">Olá, {{ user.username }}</span>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">Sair</button>
+            </form>
+        </div>
+        <div class="navbar-right">
+            <img src="{% static 'img/logo.png' %}" alt="Logo KeyLink" class="logo">
+        </div>
+    </div>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="container">
+        <h1>Bem-vindo ao sistema KeyLink</h1>
+        <div class="menu-opcoes">
+            <a href="{% url 'listar_funcionarios' %}" class="card">
+                <h2>Funcionários</h2>
+                <p>Gerencie os funcionários cadastrados no sistema.</p>
+            </a>
+            <a href="{% url 'listar_salas' %}" class="card">
+                <h2>Salas</h2>
+                <p>Visualize e administre as salas disponíveis.</p>
+            </a>
+            <a href="{% url 'listar_registros' %}" class="card">
+                <h2>Registros</h2>
+                <p>Acompanhe os registros de acesso no sistema.</p>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

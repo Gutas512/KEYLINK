@@ -1,24 +1,37 @@
-from django.shortcuts import render
+from pyexpat.errors import messages
+from django.shortcuts import render, redirect
 from Keylink.models import *
 from Keylink.forms import *
 
-def login_view(request):
-    if request.method == "POST":
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            cpf = form.cleaned_data['cpf_funcionario']
-            senha = form.cleaned_data['senha']
-            try:
-                funcionario = Funcionario.objects.get(cpf_funcionario=cpf)
-                if funcionario.senha == senha:
-                    # Realiza o login no sistema
-                    login(request, funcionario)
-                    return redirect('home')  # Redireciona para a página inicial ou dashboard
-                else:
-                    messages.error(request, "Senha incorreta.")
-            except Funcionario.DoesNotExist:
-                messages.error(request, "CPF não encontrado.")
-    else:
-        form = LoginForm()
+def login_funcionario(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
 
-    return render(request, 'login.html', {'form': form})
+        try:
+            funcionario = Funcionario.objects.get(usuario_funcionario=username, senha=password)
+            return redirect('index')  # ou qualquer página desejada após login
+        except Funcionario.DoesNotExist:
+            return render(request, 'login.html', {'error': 'Usuário ou senha inválidos'})
+
+    return render(request, 'login.html')
+
+# views.py (continuação)
+def logout_funcionario(request):
+    request.session.flush()
+    messages.success(request, 'Você saiu com sucesso.')
+    return redirect('login')
+
+# views.py
+def index(request):
+
+    return render(request, 'index.html')
+
+def listar_funcionarios(request):
+    return render(request, 'listar_funcionarios.html')
+
+def listar_salas(request):
+    return render(request, 'listar_salas.html')
+
+def listar_registros(request):
+    return render(request, 'listar_registros.html')

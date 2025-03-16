@@ -15,7 +15,7 @@ class FuncionarioForm(forms.ModelForm):
     class Meta:
         model = Funcionario
         fields = ['nome_funcionario', 'telefone_funcionario', 'endereco_funcionario',
-                  'funcao_funcionario', 'cpf_funcionario', 'senha', 'tipo_funcionario']
+                  'funcao_funcionario', 'cpf_funcionario', 'senha', 'tipo_funcionario', 'usuario_funcionario']
 
 class RegistroSaidaForm(forms.ModelForm):
     class Meta:
