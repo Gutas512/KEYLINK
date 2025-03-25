@@ -1,0 +1,20 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Excluir Chave</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Excluir Chave</h1>
+        <p>Tem certeza que deseja excluir a chave "{{ chave.numero_chave }}"?</p>
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit">Excluir</button>
+        </form>
+        <a href="{% url 'listar_chaves' %}">Cancelar</a>
+    </div>
+</body>
+</html>

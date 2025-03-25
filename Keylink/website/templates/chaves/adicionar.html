@@ -1,0 +1,20 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Adicionar Chave</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Adicionar Nova Chave</h1>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}  <!-- Exibe o formulário -->
+            <button type="submit">Salvar</button>
+        </form>
+        <a href="{% url 'listar_chaves' %}">Voltar</a>
+    </div>
+</body>
+</html>

@@ -109,11 +109,17 @@ tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 
+td.actions {
+    display: flex;
+    justify-content: center;
+}
+
 td.actions a {
     padding: 6px 12px;
     border-radius: 4px;
     text-decoration: none;
-    margin: 0 5px;
+    margin: 0 10px; /* Espaço entre os botões */
+    cursor: pointer;
 }
 
 .edit-btn {
@@ -132,10 +138,6 @@ td.actions a {
 
 .delete-btn:hover {
     background-color: #c82333;
-}
-
-td.actions a {
-    cursor: pointer;
 }
 
 /* Estilo responsivo */
@@ -175,113 +177,6 @@ form {
     text-align: center;
     cursor: pointer;
     transition: background-color 0.3s;
-}
-
-.submit-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-}
-
-.submit-btn:hover {
-    background-color: #0056b3;
-}
-
-.cancel-btn {
-    background-color: #ccc;
-    color: black;
-    text-decoration: none;
-    border: none;
-    display: inline-block;
-}
-
-.cancel-btn:hover {
-    background-color: #aaa;
-}
-
-/* Link de voltar à lista */
-.back-link {
-    display: inline-block;
-    margin-top: 20px;
-    font-size: 16px;
-    color: #007bff;
-    text-decoration: none;
-}
-
-.back-link:hover {
-    text-decoration: underline;
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-    .container {
-        padding: 20px;
-    }
-
-    form {
-        font-size: 14px;
-    }
-
-    .form-actions {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .submit-btn, .cancel-btn {
-        width: 100%;
-    }
-}
-
-
-/* Estilo para o formulário */
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    font-size: 16px;
-}
-
-/* Estilo para grupos de campos */
-.form-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    font-weight: bold;
-    margin-bottom: 8px;
-}
-
-input, select, textarea {
-    padding: 12px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-    transition: border 0.3s, box-shadow 0.3s;
-}
-
-input:focus, select:focus, textarea:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
-    outline: none;
-}
-
-/* Botões de ação */
-.form-actions {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-.submit-btn, .cancel-btn {
-    padding: 12px 20px;
-    border-radius: 6px;
-    font-weight: bold;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    width: 48%;
 }
 
 .submit-btn {
@@ -374,48 +269,19 @@ input:focus, select:focus, textarea:focus {
     background-color: #0056b3;
 }
 
-/* Botões de ação */
-.submit-btn, .cancel-btn, .delete-btn {
-    padding: 12px 20px;
-    border-radius: 6px;
+/* Estilos adicionais para os status */
+.status {
     font-weight: bold;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    width: 100%;
-    font-size: 16px;
+    padding: 4px 8px;
+    border-radius: 8px;
 }
 
-/* Botão de excluir */
-.delete-btn {
-    background-color: #dc3545;
-    color: white;
-    border: none;
+.status.disponivel {
+    color: #2e7d32;
+    background-color: #c8e6c9;
 }
 
-.delete-btn:hover {
-    background-color: #c82333;
+.status.indisponivel {
+    color: #c62828;
+    background-color: #ffcdd2;
 }
-
-/* Botões de ação - outros */
-.submit-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-}
-
-.submit-btn:hover {
-    background-color: #0056b3;
-}
-
-.cancel-btn {
-    background-color: #ccc;
-    color: black;
-    text-decoration: none;
-    border: none;
-}
-
-.cancel-btn:hover {
-    background-color: #aaa;
-}
-

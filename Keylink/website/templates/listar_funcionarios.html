@@ -5,6 +5,15 @@
     <meta charset="UTF-8">
     <title>Lista de Funcionários</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+<style>
+    .actions {
+        display: flex; /* Alinha os itens em linha */
+    }
+    .actions a {
+        margin-right: 10px; /* Adiciona um espaço entre os botões */
+        text-decoration: none; /* Remove o sublinhado dos links */
+    }
+</style>
 </head>
 <body>
    <!-- NAVBAR -->
@@ -24,7 +33,6 @@
     <div class="container">
         <h1>Lista de Funcionários</h1>
 
-
         <a href="{% url 'index' %}" class="back-button">Voltar</a>
 
         <a href="{% url 'adicionar_funcionario' %}" class="add-button">Adicionar Novo Funcionário</a>
@@ -42,13 +50,13 @@
             <tbody>
                 {% for funcionario in funcionarios %}
                 <tr>
-                    <td>{{ funcionario.id }}</td>
+                    <td>{{ funcionario.id_funcionario }}</td>
                     <td>{{ funcionario.nome_funcionario }}</td>
                     <td>{{ funcionario.funcao_funcionario }}</td>
                     <td>{{ funcionario.usuario_funcionario }}</td>
                     <td class="actions">
-                        <a href="{% url 'editar_funcionario' funcionario.id %}" class="edit-btn">Editar</a>
-                        <a href="{% url 'excluir_funcionario' funcionario.id %}" class="delete-btn">Excluir</a>
+                        <a href="{% url 'editar_funcionario' funcionario.id_funcionario %}" class="edit-btn">Editar</a>
+                        <a href="{% url 'excluir_funcionario' funcionario.id_funcionario %}" class="delete-btn">Excluir</a>
                     </td>
                 </tr>
                 {% empty %}

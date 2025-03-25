@@ -15,7 +15,16 @@ urlpatterns = [
     path('funcionarios/editar/<int:id>/', views.editar_funcionario, name='editar_funcionario'),
     path('funcionarios/excluir/<int:id>/', views.excluir_funcionario, name='excluir_funcionario'),
 
-    path('salas/', views.listar_salas, name='listar_salas'),
+    path('chaves/', views.listar_chaves, name='listar_chaves'),
+    path('chaves/adicionar/', views.adicionar_chave, name='adicionar_chave'),
+    path('chaves/editar/<int:id>/', views.editar_chave, name='editar_chave'),
+    path('chaves/excluir/<int:id>/', views.excluir_chave, name='excluir_chave'),
+    path('chave/utilizar/<int:chave_id>/', views.utilizar_chave, name='utilizar_chave'),
+    path('chave/devolver/<int:chave_id>/', views.devolver_chave, name='devolver_chave'),
+    path('chave/indisponivel/', views.chave_indisponivel, name='chave_indisponivel'),
+    path('chave/nao_emprestada/', views.chave_nao_emprestada, name='chave_nao_emprestada'),
+    path('sem-permissao/', views.sem_permissao, name='sem_permissao'),
+    path('chave/nao_emprestada/', views.chave_nao_emprestada, name='chave_nao_emprestada'),
 
     path('registros/', views.listar_registros, name='listar_registros'),
 

@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Chaves</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-left">
+            <span class="user-name">Olá, {{ funcionario.nome_funcionario }}</span>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">Sair</button>
+            </form>
+        </div>
+        <div class="navbar-right">
+            <img src="{% static 'img/logo.png' %}" alt="Logo KeyLink" class="logo">
+        </div>
+    </div>
+
+
+    <div class="container">
+        <h1>Lista de Chaves</h1>
+        <a href="{% url 'index' %}" class="back-button">Voltar</a>
+        <a href="{% url 'adicionar_chave' %}" class="add-button">Adicionar Nova Chave</a>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Número da Chave</th>
+                    <th>Descrição</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for chave in chaves %}
+                <tr>
+                    <td>{{ chave.id_chaves }}</td>
+                    <td>{{ chave.numero_chave }}</td>
+                    <td>{{ chave.descricao }}</td>
+                    <td>
+                        {% if chave.disponivel %}
+                            <span class="status disponivel">Disponível</span>
+                        {% else %}
+                            <span class="status indisponivel">Indisponível</span>
+                        {% endif %}
+                    </td>
+                    <td class="actions">
+                        {% if chave.disponivel %}
+                            <a href="{% url 'utilizar_chave' chave.id_chaves %}" class="utilizar-btn">Utilizar</a>
+                        {% elif chave.usuario == funcionario %}
+                            <a href="{% url 'devolver_chave' chave.id_chaves %}" class="devolver-btn">Devolver</a>
+                        {% else %}
+                            <span class="status indisponivel">Indisponível</span>
+                        {% endif %}
+                        <a href="{% url 'excluir_chave' chave.id_chaves %}" class="delete-btn">Excluir</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">Nenhuma chave cadastrada.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

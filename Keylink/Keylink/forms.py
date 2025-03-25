@@ -2,15 +2,13 @@ from django import forms
 from django.contrib.auth.hashers import make_password
 from .models import *
 
-class SalaForm(forms.ModelForm):
-    class Meta:
-        model = Sala
-        fields = ['numero_sala', 'tipo_de_sala']
-
 class ChaveForm(forms.ModelForm):
     class Meta:
         model = Chave
-        fields = ['salas']
+        fields = ['numero_chave', 'descricao', 'disponivel']
+        widgets = {
+            'descricao': forms.Textarea(attrs={'rows': 4, 'cols': 40}),
+        }
 
 class FuncionarioForm(forms.ModelForm):
     class Meta:
@@ -35,16 +33,6 @@ class FuncionarioForm(forms.ModelForm):
             raise forms.ValidationError("A senha deve ter no mínimo 8 caracteres.")
         return senha
 
-
-class RegistroSaidaForm(forms.ModelForm):
-    class Meta:
-        model = RegistroSaida
-        fields = ['chaves', 'funcionario', 'registro_saida_horario']
-
-class RegistroEntradaForm(forms.ModelForm):
-    class Meta:
-        model = RegistroEntrada
-        fields = ['registro_saida', 'chaves', 'funcionario', 'registro_entrada_horario']
 
 class LoginForm(forms.Form):
     cpf_funcionario = forms.CharField(max_length=14, label="CPF", widget=forms.TextInput(attrs={'placeholder': 'Digite seu CPF'}))
