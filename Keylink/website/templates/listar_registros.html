@@ -1,11 +1,302 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Registros</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KeyLink - Registros</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <style>
+        /* Estilos mantidos da página base */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 98%;
+            background-color: #4d05ab;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-name {
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background-color: #7430cf;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .logout-btn:hover {
+            background-color: #5a1db3;
+        }
+
+        .logo {
+            height: 40px;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 70px;
+            width: 250px;
+            height: calc(100% - 70px);
+            background-color: #410491;
+            padding-top: 20px;
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(-250px);
+            z-index: 999;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            padding: 15px;
+            display: block;
+            text-align: center;
+            transition: 0.3s;
+            font-size: 16px;
+        }
+
+        .sidebar a:hover {
+            background-color: #8a3cf0;
+        }
+
+        .toggle-btn {
+            position: fixed;
+            left: 10px;
+            top: 80px;
+            background-color: #7430cf;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            border-radius: 4px;
+            z-index: 1001;
+            transition: 0.3s;
+        }
+
+        .toggle-btn:hover {
+            background-color: #5a1db3;
+        }
+
+        .container {
+            margin-top: 80px;
+            padding: 20px;
+            margin-bottom: 60px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        footer {
+            background-color: #4d05ab;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        /* Estilos específicos para registros */
+        .records-container {
+            margin-bottom: 40px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .records-container h2 {
+            color: #4d05ab;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #4d05ab;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .disponivel {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .indisponivel {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
 </head>
 <body>
-    <h1>Registros</h1>
-    <p>Em breve, você verá os registros aqui!</p>
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <div class="navbar-left">
+            {% if funcionario %}
+                <span class="user-name">Olá, {{ funcionario.nome_funcionario }}</span>
+            {% endif %}
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="logout-btn">Sair</button>
+            </form>
+        </div>
+        <div class="navbar-right">
+            <img src="{% static 'img/logo.png' %}" alt="Logo KeyLink" class="logo">
+        </div>
+    </div>
+
+    <!-- TOGGLE BUTTON -->
+    <button class="toggle-btn">☰</button>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <a href="{% url 'listar_funcionarios' %}">Funcionários</a>
+        <a href="{% url 'listar_chaves' %}">Chaves</a>
+        <a href="{% url 'listar_registros' %}">Registros</a>
+    </div>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="container">
+        <h1>Registros de Chaves</h1>
+
+        <div class="records-container">
+            <h2>Registros de Saída</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Chave</th>
+                        <th>Funcionário</th>
+                        <th>Data/Hora Saída</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for registro in registros_saida %}
+                    <tr>
+                        <td>{{ registro.id_registro }}</td>
+                        <td>{{ registro.chaves.numero_chave }}</td>
+                        <td>{{ registro.funcionario.nome_funcionario }}</td>
+                        <td>{{ registro.registro_saida_horario|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="empty-message">Nenhum registro de saída encontrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="records-container">
+            <h2>Registros de Entrada</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Chave</th>
+                        <th>Funcionário</th>
+                        <th>Data/Hora Entrada</th>
+                        <th>Tempo de Empréstimo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for registro in registros_entrada %}
+                    <tr>
+                        <td>{{ registro.id_registro_entrada }}</td>
+                        <td>{{ registro.chaves.numero_chave }}</td>
+                        <td>{{ registro.funcionario.nome_funcionario }}</td>
+                        <td>{{ registro.registro_entrada_horario|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            {{ registro.registro_saida.registro_saida_horario|timesince:registro.registro_entrada_horario }}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="empty-message">Nenhum registro de entrada encontrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        Direitos de KeyLink &copy; 2025
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const sidebar = document.querySelector(".sidebar");
+            const toggleBtn = document.querySelector(".toggle-btn");
+            let isOpen = false;
+
+            toggleBtn.addEventListener("click", function () {
+                if (isOpen) {
+                    sidebar.style.transform = "translateX(-250px)";
+                } else {
+                    sidebar.style.transform = "translateX(0)";
+                }
+                isOpen = !isOpen;
+            });
+        });
+    </script>
 </body>
 </html>

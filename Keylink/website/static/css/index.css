@@ -1,94 +1,115 @@
-body {
-    font-family: 'Segoe UI', sans-serif;
-    background-color: #f0f2f5;
-    margin: 0;
-    padding: 0;
-}
 
-/* Navbar superior */
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #003366;
-    padding: 15px 30px;
-    color: white;
-}
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
 
-.navbar-left {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
+        /* Navbar superior */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #5a97fa;
+            padding: 15px 30px;
+            color: white;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
 
-.user-name {
-    font-size: 16px;
-    font-weight: 500;
-}
-
-.logout-btn {
-    background-color: #cc0000;
-    color: white;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    font-weight: bold;
-}
-
-.logout-btn:hover {
-    background-color: #a30000;
-}
-
-.navbar-right .logo {
-    height: 40px;
-}
-
-/* Container principal */
-.container {
-    max-width: 1000px;
-    margin: 60px auto;
-    text-align: center;
-    padding: 30px;
-    background-color: white;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-/* Cards de menu */
-.menu-opcoes {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 40px;
-    gap: 30px;
-}
-
-.card {
-    width: 260px;
-    padding: 25px;
-    background-color: #0059b3;
-    color: white;
-    text-decoration: none;
-    border-radius: 12px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-    transition: 0.3s ease;
-}
-
-.card:hover {
-    background-color: #004080;
-    transform: scale(1.05);
-}
-
-.card h2 {
-    font-size: 22px;
-    margin-bottom: 10px;
-}
-
-.card p {
-    font-size: 14px;
-    color: #e0e0e0;
-}
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .navbar-right .logo {
+              height: 40px; /* Ajuste a altura conforme necessário */
+              width: auto;  /* Garantir que a largura se ajuste proporcionalmente */
+              object-fit: contain;  /* Assegura que a imagem não seja deformada */
+        }
 
 
+        .user-name {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background-color: #cc0000;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+
+        .logout-btn:hover {
+            background-color: #a30000;
+        }
+
+        .navbar-right .logo {
+            height: 40px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: -250px;
+            top: 0;
+            width: 250px;
+            height: 100%;
+            background-color: #003366;
+            padding-top: 60px;
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            padding: 15px;
+            display: block;
+            text-align: center;
+            transition: background 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #004080;
+        }
+
+        .toggle-btn {
+            position: absolute;
+            left: 260px;
+            top: 20px;
+            background-color: #0059b3;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            border-radius: 4px;
+        }
+
+        /* Container principal */
+        .container {
+            max-width: 800px;
+            margin: 120px auto;
+            text-align: center;
+            padding: 30px;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }

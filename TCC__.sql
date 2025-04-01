@@ -2,19 +2,16 @@ CREATE DATABASE db_chaves;
 
 USE db_chaves;
 
-CREATE TABLE salas (
-    id_sala INT PRIMARY KEY,
-    numero_sala INT NOT NULL,
-    tipo_de_sala VARCHAR(255) NOT NULL
-);
-
-
+-- Criando a tabela 'chaves'
 CREATE TABLE chaves (
-    id_chaves INT PRIMARY KEY,
-    salas_id_sala INT NOT NULL,
-    FOREIGN KEY (salas_id_sala) REFERENCES salas(id_sala)
+    id_chaves INT AUTO_INCREMENT PRIMARY KEY,
+    numero_chave VARCHAR(10) NOT NULL,
+    descricao TEXT,
+    disponivel BOOLEAN DEFAULT TRUE,
+    data_cadastro DATE
 );
 
+-- Criando a tabela 'funcionarios'
 CREATE TABLE funcionarios (
     id_funcionario INT AUTO_INCREMENT PRIMARY KEY,
     nome_funcionario VARCHAR(255) NOT NULL,
@@ -28,8 +25,7 @@ CREATE TABLE funcionarios (
     CONSTRAINT chk_tipo_funcionario CHECK (tipo_funcionario IN ('Quadro', 'Extra Quadro'))
 );
 
-
-
+-- Criando a tabela 'registro_saida'
 CREATE TABLE registro_saida (
     id_registro VARCHAR(45) PRIMARY KEY,
     chaves_id_chaves INT NOT NULL,
@@ -39,7 +35,7 @@ CREATE TABLE registro_saida (
     FOREIGN KEY (funcionarios_id_funcionario) REFERENCES funcionarios(id_funcionario)
 );
 
-
+-- Criando a tabela 'registro_entrada'
 CREATE TABLE registro_entrada (
     id_registro_entrada INT AUTO_INCREMENT PRIMARY KEY,
     registro_saida_id_registro VARCHAR(45) NOT NULL,
@@ -50,5 +46,12 @@ CREATE TABLE registro_entrada (
     FOREIGN KEY (chaves_id_chaves) REFERENCES chaves(id_chaves),
     FOREIGN KEY (funcionarios_id_funcionario) REFERENCES funcionarios(id_funcionario)
 );
+
+
+ALTER TABLE chaves ADD COLUMN usuario_id INT;
+ALTER TABLE chaves ADD CONSTRAINT fk_usuario FOREIGN KEY (usuario_id) REFERENCES funcionarios(id_funcionario) ON DELETE SET NULL;
+
+
+DROP TABLE keylink_registrosaida;
 
 

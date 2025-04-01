@@ -37,3 +37,14 @@ class FuncionarioForm(forms.ModelForm):
 class LoginForm(forms.Form):
     cpf_funcionario = forms.CharField(max_length=14, label="CPF", widget=forms.TextInput(attrs={'placeholder': 'Digite seu CPF'}))
     senha = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Digite sua senha'}))
+
+
+class RegistroSaidaForm(forms.ModelForm):
+    class Meta:
+        model = RegistroSaida
+        fields = ['chaves', 'funcionario', 'registro_saida_horario']
+
+class RegistroEntradaForm(forms.ModelForm):
+    class Meta:
+        model = RegistroEntrada
+        fields = ['registro_saida', 'chaves', 'funcionario', 'registro_entrada_horario']

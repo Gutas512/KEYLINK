@@ -3,13 +3,200 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Lista de Chaves</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KeyLink - Lista de Chaves</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+   <style>
+        /* Estilos mantidos da página base */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 98%;
+            background-color: #4d05ab;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 60px;
+            width: 250px;
+            height: calc(100% - 60px);
+            background-color: #410491;
+            padding-top: 20px;
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(-250px);
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            padding: 15px;
+            display: block;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #8a3cf0;
+        }
+
+        .toggle-btn {
+            position: fixed;
+            left: 10px;
+            top: 70px;
+            background-color: #7430cf;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            border-radius: 4px;
+            z-index: 1001;
+        }
+
+        .container {
+            margin-top: 80px;
+            padding: 20px;
+            margin-bottom: 60px; /* Para não ficar embaixo do footer */
+        }
+
+        footer {
+            background-color: #4d05ab;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        /* Estilos específicos para a lista de chaves */
+        .button-group {
+            margin-bottom: 20px;
+        }
+
+        .back-button, .add-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4d05ab;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+        }
+
+        .back-button:hover, .add-button:hover {
+            background-color: #410491;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #4d05ab;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .utilizar-btn, .devolver-btn, .delete-btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .utilizar-btn {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .utilizar-btn:hover {
+            background-color: #138496;
+        }
+
+        .devolver-btn {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .devolver-btn:hover {
+            background-color: #e0a800;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .disponivel {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .indisponivel {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
+    <!-- NAVBAR -->
     <div class="navbar">
         <div class="navbar-left">
-            <span class="user-name">Olá, {{ funcionario.nome_funcionario }}</span>
+            {% if funcionario %}
+                <span class="user-name">Olá, {{ funcionario.nome_funcionario }}</span>
+            {% endif %}
             <form method="post" action="{% url 'logout' %}">
                 {% csrf_token %}
                 <button type="submit" class="logout-btn">Sair</button>
@@ -20,11 +207,24 @@
         </div>
     </div>
 
+    <!-- TOGGLE BUTTON -->
+    <button class="toggle-btn">☰</button>
 
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <a href="{% url 'listar_funcionarios' %}">Funcionários</a>
+        <a href="{% url 'listar_chaves' %}">Chaves</a>
+        <a href="{% url 'listar_registros' %}">Registros</a>
+    </div>
+
+    <!-- CONTEÚDO PRINCIPAL -->
     <div class="container">
         <h1>Lista de Chaves</h1>
-        <a href="{% url 'index' %}" class="back-button">Voltar</a>
-        <a href="{% url 'adicionar_chave' %}" class="add-button">Adicionar Nova Chave</a>
+
+        <div class="button-group">
+            <a href="{% url 'adicionar_chave' %}" class="add-button">Adicionar Nova Chave</a>
+        </div>
+
         <table>
             <thead>
                 <tr>
@@ -48,24 +248,54 @@
                             <span class="status indisponivel">Indisponível</span>
                         {% endif %}
                     </td>
-                    <td class="actions">
-                        {% if chave.disponivel %}
-                            <a href="{% url 'utilizar_chave' chave.id_chaves %}" class="utilizar-btn">Utilizar</a>
-                        {% elif chave.usuario == funcionario %}
-                            <a href="{% url 'devolver_chave' chave.id_chaves %}" class="devolver-btn">Devolver</a>
-                        {% else %}
-                            <span class="status indisponivel">Indisponível</span>
-                        {% endif %}
-                        <a href="{% url 'excluir_chave' chave.id_chaves %}" class="delete-btn">Excluir</a>
+                    <td>
+                        <div class="actions">
+                            {% if chave.disponivel %}
+                                <form method="post" action="{% url 'utilizar_chave' chave.id_chaves %}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="utilizar-btn">Utilizar</button>
+                                </form>
+                            {% elif chave.usuario.id_funcionario == funcionario.id_funcionario %}
+                                <form method="post" action="{% url 'devolver_chave' chave.id_chaves %}" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="devolver-btn">Devolver</button>
+                                </form>
+                            {% else %}
+                                <span class="status indisponivel">Indisponível</span>
+                            {% endif %}
+                            <a href="{% url 'excluir_chave' chave.id_chaves %}" class="delete-btn">Excluir</a>
+                        </div>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="5">Nenhuma chave cadastrada.</td>
+                    <td colspan="5" class="empty-message">Nenhuma chave cadastrada.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+
+    <!-- FOOTER -->
+    <footer>
+        Direitos de KeyLink &copy; 2025
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const sidebar = document.querySelector(".sidebar");
+            const toggleBtn = document.querySelector(".toggle-btn");
+            let isOpen = false;
+
+            toggleBtn.addEventListener("click", function () {
+                if (isOpen) {
+                    sidebar.style.transform = "translateX(-250px)";
+                } else {
+                    sidebar.style.transform = "translateX(0)";
+                }
+                isOpen = !isOpen;
+            });
+        });
+    </script>
 </body>
 </html>

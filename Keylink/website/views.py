@@ -1,7 +1,10 @@
 from pyexpat.errors import messages
+from django.contrib import messages
+from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import logout
+from datetime import datetime
 from Keylink.models import *
 from Keylink.forms import *
 
@@ -152,61 +155,84 @@ def editar_chave(request, id):
 
 
 def utilizar_chave(request, chave_id):
-    # Verifique se o funcionário está logado na sessão
     if 'funcionario_id' not in request.session:
-        return redirect('login')  # Redireciona para o login se não houver funcionário logado
+        return redirect('login')
 
     funcionario_id = request.session['funcionario_id']
     try:
         funcionario = Funcionario.objects.get(id_funcionario=funcionario_id)
     except Funcionario.DoesNotExist:
-        return redirect('sem_permissao')  # Caso não seja um funcionário válido, redireciona para "sem_permissao"
+        return redirect('sem_permissao')
 
-    # Obtém a chave
     chave = get_object_or_404(Chave, id_chaves=chave_id)
 
-    # Verifique o estado da chave
-    print(f"Chave {chave.numero_chave} está disponível? {chave.disponivel}")
-
-    # Verifique se a chave está disponível
     if chave.disponivel:
-        chave.usuario = funcionario  # Atribui o funcionário à chave
-        chave.disponivel = False  # Marca a chave como indisponível
+        # Atualiza o status da chave
+        chave.usuario = funcionario
+        chave.disponivel = False
         chave.save()
 
+        # Cria o registro de saída com ID único baseado em timestamp
+        timestamp = int(timezone.now().timestamp())
+        registro_id = f"SAIDA-{timestamp}-{chave_id}-{funcionario_id}"
 
+        RegistroSaida.objects.create(
+            id_registro=registro_id,
+            chaves=chave,
+            funcionario=funcionario,
+            registro_saida_horario=timezone.now()
+        )
 
-        return redirect('listar_chaves')  # Redirecionar para a lista de chaves após a utilização
+        messages.success(request, f'Chave {chave.numero_chave} utilizada com sucesso!')
+        return redirect('listar_chaves')
     else:
-        return redirect('chave_indisponivel')  # Redirecionar se a chave já foi utilizada
+        messages.error(request, 'Esta chave já está em uso!')
+        return redirect('listar_chaves')
+
 
 
 
 def devolver_chave(request, chave_id):
-    # Verifique se o funcionário está logado na sessão
     if 'funcionario_id' not in request.session:
-        return redirect('login')  # Redireciona para o login se não houver funcionário logado
+        return redirect('login')
 
     funcionario_id = request.session['funcionario_id']
     try:
         funcionario = Funcionario.objects.get(id_funcionario=funcionario_id)
     except Funcionario.DoesNotExist:
-        return redirect('sem_permissao')  # Caso não seja um funcionário válido, redireciona para "sem_permissao"
+        return redirect('sem_permissao')
 
-    # Obtém a chave
     chave = get_object_or_404(Chave, id_chaves=chave_id)
 
-    # Verifique se a chave foi emprestada para o funcionário
-    if chave.usuario == funcionario:  # Verifica se o funcionário é o responsável pela chave
-        chave.usuario = None  # Remove o funcionário da chave
-        chave.disponivel = True  # Marca a chave como disponível novamente
+    if chave.usuario and chave.usuario.id_funcionario == funcionario_id:
+        # Encontra o registro de saída correspondente
+        registro_saida = RegistroSaida.objects.filter(
+            chaves=chave,
+            funcionario=funcionario
+        ).order_by('-registro_saida_horario').first()
 
+        if registro_saida:
+            # Cria o registro de entrada
+            RegistroEntrada.objects.create(
+                registro_saida=registro_saida,
+                chaves=chave,
+                funcionario=funcionario,
+                registro_entrada_horario=timezone.now()
+            )
 
-        chave.save()
+            # Atualiza o status da chave
+            chave.usuario = None
+            chave.disponivel = True
+            chave.save()
 
-        return redirect('listar_chaves')  # Redirecionar para a lista de chaves após a devolução
+            messages.success(request, f'Chave {chave.numero_chave} devolvida com sucesso!')
+        else:
+            messages.error(request, 'Registro de saída não encontrado para esta chave!')
     else:
-        return redirect('chave_nao_emprestada')  # Caso a chave não tenha sido emprestada ao funcionário
+        messages.error(request, 'Esta chave não foi emprestada para você!')
+
+    return redirect('listar_chaves')
+
 
 
 def chave_nao_emprestada(request):
@@ -235,3 +261,80 @@ def listar_registros(request):
     if 'funcionario_id' not in request.session:
         return redirect('login')
     return render(request, 'listar_registros.html')
+
+def registrar_saida(request, chave_id):
+    try:
+        chave = Chave.objects.get(id_chaves=chave_id)
+        funcionario = request.user.funcionario  # Assumindo que você tem um modelo de Usuário associado ao Funcionario
+        if chave.disponivel:  # Verifica se a chave está disponível
+            registro_saida = RegistroSaida.objects.create(
+                chaves=chave,
+                funcionario=funcionario,
+                registro_saida_horario=timezone.now()
+            )
+            chave.disponivel = False  # Marca a chave como não disponível
+            chave.save()
+            return redirect('listar_registros')  # Redireciona para a página de registros
+        else:
+            # Caso a chave já tenha sido retirada, você pode mostrar um erro ou algo do tipo
+            return redirect('listar_registros')  # Exemplo, ou pode mostrar um erro
+    except Chave.DoesNotExist:
+        # Se a chave não for encontrada, você pode redirecionar ou mostrar uma mensagem de erro
+        return redirect('listar_registros')
+
+def registrar_entrada(request, chave_id):
+    try:
+        chave = Chave.objects.get(id_chaves=chave_id)
+        funcionario = request.user.funcionario  # Assumindo que você tem um modelo de Usuário associado ao Funcionario
+        if not chave.disponivel:  # Verifica se a chave está registrada como saída
+            # Encontrar o último registro de saída relacionado à chave
+            registro_saida = RegistroSaida.objects.filter(chaves=chave).last()
+            if registro_saida:
+                RegistroEntrada.objects.create(
+                    registro_saida=registro_saida,
+                    chaves=chave,
+                    funcionario=funcionario,
+                    registro_entrada_horario=timezone.now()
+                )
+                chave.disponivel = True  # Marca a chave como disponível novamente
+                chave.save()
+                return redirect('listar_registros')  # Redireciona para a página de registros
+            else:
+                # Se não encontrar um registro de saída correspondente
+                return redirect('listar_registros')
+        else:
+            # Caso a chave já esteja disponível, você pode mostrar um erro ou algo do tipo
+            return redirect('listar_registros')  # Exemplo, ou pode mostrar um erro
+    except Chave.DoesNotExist:
+        # Se a chave não for encontrada, você pode redirecionar ou mostrar uma mensagem de erro
+        return redirect('listar_registros')
+
+
+def registros_chaves(request):
+    # Obtenha todos os registros de saída e entrada
+    registros_saida = RegistroSaida.objects.all()
+    registros_entrada = RegistroEntrada.objects.all()
+
+    # Passe os registros para o template
+    return render(request, 'listar_registros.html', {
+        'registros_saida': registros_saida,
+        'registros_entrada': registros_entrada,
+    })
+
+def listar_registros(request):
+    if 'funcionario_id' not in request.session:
+        return redirect('login')
+
+    try:
+        funcionario = Funcionario.objects.get(id_funcionario=request.session['funcionario_id'])
+    except Funcionario.DoesNotExist:
+        return redirect('sem_permissao')
+
+    registros_saida = RegistroSaida.objects.all().order_by('-registro_saida_horario')
+    registros_entrada = RegistroEntrada.objects.all().order_by('-registro_entrada_horario')
+
+    return render(request, 'listar_registros.html', {
+        'registros_saida': registros_saida,
+        'registros_entrada': registros_entrada,
+        'funcionario': funcionario
+    })
