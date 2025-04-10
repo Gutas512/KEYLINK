@@ -1,15 +1,30 @@
+from django.contrib.auth.backends import ModelBackend
+from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 
 class Funcionario(models.Model):
+    # Mantenha todos os seus campos atuais
     id_funcionario = models.AutoField(primary_key=True, db_column='id_funcionario')
     nome_funcionario = models.CharField(max_length=255)
-    usuario_funcionario = models.CharField(max_length=255)
+    usuario_funcionario = models.CharField(max_length=255, unique=True)
     telefone_funcionario = models.CharField(max_length=20, null=True, blank=True)
     endereco_funcionario = models.CharField(max_length=255, null=True, blank=True)
     funcao_funcionario = models.CharField(max_length=255, null=True, blank=True)
     cpf_funcionario = models.CharField(max_length=14)
     senha = models.CharField(max_length=128)
     tipo_funcionario = models.CharField(max_length=20, default='Quadro')
+
+    # Adicione a relação com User
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='funcionario'
+    )
 
     class Meta:
         db_table = 'funcionarios'
@@ -25,6 +40,24 @@ class Funcionario(models.Model):
 
     def __str__(self):
         return self.nome_funcionario
+
+
+# Sinal para criar/atualizar User quando Funcionario for salvo
+@receiver(post_save, sender=Funcionario)
+def create_user_for_funcionario(sender, instance, created, **kwargs):
+    if created or not instance.user:
+        user, user_created = User.objects.get_or_create(
+            username=instance.usuario_funcionario,
+            defaults={
+                'first_name': instance.nome_funcionario.split()[0],
+                'last_name': ' '.join(instance.nome_funcionario.split()[1:]) if ' ' in instance.nome_funcionario else ''
+            }
+        )
+        if user_created:
+            user.set_password(instance.senha)
+            user.save()
+        instance.user = user
+        instance.save()
 
 
 class Chave(models.Model):
@@ -66,3 +99,14 @@ class RegistroEntrada(models.Model):
 
     def __str__(self):
         return f"Entrada {self.id_registro_entrada} - {self.chaves.numero_chave}"
+
+
+class FuncionarioBackend(ModelBackend):
+    def authenticate(self, request, username=None, password=None, **kwargs):
+        try:
+            funcionario = Funcionario.objects.get(usuario_funcionario=username)
+            if funcionario.senha == password:  # Ou use check_password se estiver hash
+                return funcionario.user  # Usa a property user que criamos
+        except Funcionario.DoesNotExist:
+            return None
+        return None
