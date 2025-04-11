@@ -165,21 +165,16 @@
         <div class="login-right">
             <div class="login-form">
                 <h3>Login</h3>
-                <form method="POST" action="{% url 'login' %}">
+                <form method="POST">
                     {% csrf_token %}
-                    <input type="text" name="username" placeholder="Usuário" required autofocus>
+                    <input type="text" name="username" placeholder="Usuário" required>
                     <input type="password" name="password" placeholder="Senha" required>
                     <button type="submit">Entrar</button>
-
-                    <!-- Mensagens de erro -->
-                    {% if messages %}
-                    <div class="error-message">
-                        {% for message in messages %}
-                            {{ message }}
-                        {% endfor %}
-                    </div>
-                    {% endif %}
                 </form>
+
+                {% if error %}
+                    <p class="error-message">{{ error }}</p>
+                {% endif %}
 
                 <a href="#" class="forgot-password">Esqueceu sua senha?</a>
             </div>
