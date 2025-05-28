@@ -20,6 +20,28 @@
                 }
                 isOpen = !isOpen;
             });
+
+            // Função para filtrar a tabela
+            function filterTable() {
+                const searchTerm = document.getElementById('search-input').value.toLowerCase();
+
+                const rows = document.querySelectorAll('tbody tr');
+
+                rows.forEach(row => {
+                    const nome = row.cells[1].textContent.toLowerCase();
+                    const usuario = row.cells[3].textContent.toLowerCase();
+                    const cargo = row.cells[2].textContent.toLowerCase();
+
+                    const matches = nome.includes(searchTerm) ||
+                                 usuario.includes(searchTerm) ||
+                                 cargo.includes(searchTerm);
+
+                    row.style.display = matches ? '' : 'none';
+                });
+            }
+
+            // Adicionar evento ao campo de busca
+            document.getElementById('search-input').addEventListener('input', filterTable);
         });
     </script>
     <style>
@@ -29,7 +51,7 @@
             top: 0;
             left: 0;
             width: 98%;
-            background-color: #4d05ab;
+            background-color: #0072f5;
             color: white;
             padding: 15px 30px;
             display: flex;
@@ -44,7 +66,7 @@
             top: 60px;
             width: 250px;
             height: calc(100% - 60px);
-            background-color: #410491;
+            background-color: #0061cc;
             padding-top: 20px;
             transition: transform 0.3s ease-in-out;
             transform: translateX(-250px);
@@ -60,14 +82,14 @@
         }
 
         .sidebar a:hover {
-            background-color: #8a3cf0;
+            background-color: #0051b3;
         }
 
         .toggle-btn {
             position: fixed;
             left: 10px;
             top: 70px;
-            background-color: #7430cf;
+            background-color: #0042a1;
             color: white;
             border: none;
             padding: 10px;
@@ -80,11 +102,11 @@
         .container {
             margin-top: 80px;
             padding: 20px;
-            margin-bottom: 60px; /* Para não ficar embaixo do footer */
+            margin-bottom: 60px;
         }
 
         footer {
-            background-color: #4d05ab;
+            background-color: #0072f5;
             color: white;
             text-align: center;
             padding: 10px;
@@ -98,22 +120,26 @@
         /* Estilos específicos para a lista de funcionários */
         .button-group {
             margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .back-button, .add-button {
             display: inline-block;
             padding: 10px 20px;
-            background-color: #4d05ab;
+            background-color: #0072f5;
             color: white;
             text-decoration: none;
             font-weight: bold;
             border-radius: 6px;
             transition: background-color 0.3s;
-            margin-right: 10px;
         }
 
         .back-button:hover, .add-button:hover {
-            background-color: #410491;
+            background-color: #0061cc;
         }
 
         table {
@@ -130,7 +156,7 @@
         }
 
         th {
-            background-color: #4d05ab;
+            background-color: #0072f5;
             color: white;
             font-weight: bold;
         }
@@ -179,6 +205,36 @@
             padding: 20px;
             color: #666;
         }
+
+        /* Estilos para a barra de pesquisa */
+        .search-container {
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #0072f5;
+            box-shadow: 0 0 0 2px rgba(0, 114, 245, 0.2);
+        }
+
+        .search-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
     </style>
 </head>
 <body>
@@ -192,7 +248,7 @@
             </form>
         </div>
         <div class="navbar-right">
-            <img src="{% static 'img/logo.png' %}" alt="Logo KeyLink" class="logo">
+            <img src="{% static 'logo.png' %}" alt="Logo KeyLink" class="logo">
         </div>
     </div>
 
@@ -212,6 +268,11 @@
 
         <div class="button-group">
             <a href="{% url 'adicionar_funcionario' %}" class="add-button">Adicionar Novo Funcionário</a>
+
+            <div class="search-container">
+                <label for="search-input" class="search-label">Pesquisar Funcionários:</label>
+                <input type="text" id="search-input" class="search-input" placeholder="Digite nome, usuário ou cargo...">
+            </div>
         </div>
 
         <table>

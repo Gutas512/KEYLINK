@@ -28,7 +28,7 @@
             gap: 15px;
         }
         .navbar-right .logo {
-              height: 40px; /* Ajuste a altura conforme necessário */
+              height: 60px; /* Ajuste a altura conforme necessário */
               width: auto;  /* Garantir que a largura se ajuste proporcionalmente */
               object-fit: contain;  /* Assegura que a imagem não seja deformada */
         }

@@ -7,13 +7,13 @@
     <title>KeyLink - Registros</title>
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
     <style>
-        /* Estilos mantidos da página base */
+        /* Estilos base mantidos */
         .navbar {
             position: fixed;
             top: 0;
             left: 0;
             width: 98%;
-            background-color: #4d05ab;
+            background-color: #0072f5;
             color: white;
             padding: 15px 30px;
             display: flex;
@@ -22,45 +22,16 @@
             z-index: 1000;
         }
 
-        .navbar-left {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .user-name {
-            font-weight: bold;
-        }
-
-        .logout-btn {
-            background-color: #7430cf;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .logout-btn:hover {
-            background-color: #5a1db3;
-        }
-
-        .logo {
-            height: 40px;
-        }
-
         .sidebar {
             position: fixed;
             left: 0;
-            top: 70px;
+            top: 60px;
             width: 250px;
-            height: calc(100% - 70px);
-            background-color: #410491;
+            height: calc(100% - 60px);
+            background-color: #0061cc;
             padding-top: 20px;
             transition: transform 0.3s ease-in-out;
             transform: translateX(-250px);
-            z-index: 999;
         }
 
         .sidebar a {
@@ -70,18 +41,17 @@
             display: block;
             text-align: center;
             transition: 0.3s;
-            font-size: 16px;
         }
 
         .sidebar a:hover {
-            background-color: #8a3cf0;
+            background-color: #0051b3;
         }
 
         .toggle-btn {
             position: fixed;
             left: 10px;
-            top: 80px;
-            background-color: #7430cf;
+            top: 70px;
+            background-color: #0042a1;
             color: white;
             border: none;
             padding: 10px;
@@ -89,24 +59,16 @@
             font-size: 20px;
             border-radius: 4px;
             z-index: 1001;
-            transition: 0.3s;
-        }
-
-        .toggle-btn:hover {
-            background-color: #5a1db3;
         }
 
         .container {
             margin-top: 80px;
             padding: 20px;
             margin-bottom: 60px;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
         }
 
         footer {
-            background-color: #4d05ab;
+            background-color: #0072f5;
             color: white;
             text-align: center;
             padding: 10px;
@@ -118,19 +80,35 @@
         }
 
         /* Estilos específicos para registros */
-        .records-container {
-            margin-bottom: 40px;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        .button-group {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        .records-container h2 {
-            color: #4d05ab;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0f0f0;
+        .search-container {
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #0072f5;
+            box-shadow: 0 0 0 2px rgba(0, 114, 245, 0.2);
         }
 
         table {
@@ -147,7 +125,7 @@
         }
 
         th {
-            background-color: #4d05ab;
+            background-color: #0072f5;
             color: white;
             font-weight: bold;
         }
@@ -160,28 +138,32 @@
             background-color: #f1f1f1;
         }
 
-        .status {
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .disponivel {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .indisponivel {
-            background-color: #6c757d;
-            color: white;
-        }
-
         .empty-message {
             text-align: center;
             padding: 20px;
             color: #666;
-            font-style: italic;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .records-container {
+            margin-bottom: 30px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .records-container h2 {
+            color: #0072f5;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
         }
     </style>
 </head>
@@ -198,7 +180,7 @@
             </form>
         </div>
         <div class="navbar-right">
-            <img src="{% static 'img/logo.png' %}" alt="Logo KeyLink" class="logo">
+            <img src="{% static 'logo.png' %}" alt="Logo KeyLink" class="logo">
         </div>
     </div>
 
@@ -207,18 +189,27 @@
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <a href="{% url 'listar_funcionarios' %}">Funcionários</a>
-        <a href="{% url 'listar_chaves' %}">Chaves</a>
-        <a href="{% url 'listar_registros' %}">Registros</a>
+        {% if funcionario.tipo_usuario == 'admin' %}
+            <a href="{% url 'listar_funcionarios' %}">Funcionários</a>
+            <a href="{% url 'listar_chaves' %}">Chaves</a>
+            <a href="{% url 'listar_registros' %}">Registros</a>
+        {% else %}
+            <a href="{% url 'listar_chaves' %}">Chaves</a>
+        {% endif %}
     </div>
 
     <!-- CONTEÚDO PRINCIPAL -->
     <div class="container">
         <h1>Registros de Chaves</h1>
 
+        <!-- Barra de Pesquisa -->
+        <div class="search-container">
+            <input type="text" id="search-input" class="search-input" placeholder="Pesquisar em todos os registros..." onkeyup="searchTables()">
+        </div>
+
         <div class="records-container">
             <h2>Registros de Saída</h2>
-            <table>
+            <table id="saidaTable">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -246,7 +237,7 @@
 
         <div class="records-container">
             <h2>Registros de Entrada</h2>
-            <table>
+            <table id="entradaTable">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -289,14 +280,72 @@
             let isOpen = false;
 
             toggleBtn.addEventListener("click", function () {
-                if (isOpen) {
-                    sidebar.style.transform = "translateX(-250px)";
-                } else {
-                    sidebar.style.transform = "translateX(0)";
-                }
+                sidebar.style.transform = isOpen ? "translateX(-250px)" : "translateX(0)";
                 isOpen = !isOpen;
             });
         });
+
+        function searchTables() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const saidaRows = document.querySelectorAll('#saidaTable tbody tr');
+            const entradaRows = document.querySelectorAll('#entradaTable tbody tr');
+
+            let foundInSaida = false;
+            let foundInEntrada = false;
+
+            // Pesquisar na tabela de saída
+            saidaRows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                const rowText = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(' ');
+
+                if (rowText.includes(searchTerm)) {
+                    row.style.display = '';
+                    foundInSaida = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Pesquisar na tabela de entrada
+            entradaRows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                const rowText = Array.from(cells).map(cell => cell.textContent.toLowerCase()).join(' ');
+
+                if (rowText.includes(searchTerm)) {
+                    row.style.display = '';
+                    foundInEntrada = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Mostrar mensagem se não encontrar resultados
+            if (!foundInSaida && !foundInEntrada && searchTerm.length > 0) {
+                showNoResultsMessage();
+            } else {
+                hideNoResultsMessage();
+            }
+        }
+
+        function showNoResultsMessage() {
+            let message = document.getElementById("noResultsMessage");
+            if (!message) {
+                message = document.createElement("div");
+                message.id = "noResultsMessage";
+                message.className = "no-results";
+                message.textContent = "Nenhum resultado encontrado para a pesquisa.";
+
+                const container = document.querySelector(".container");
+                container.insertBefore(message, document.querySelector(".records-container"));
+            }
+        }
+
+        function hideNoResultsMessage() {
+            const message = document.getElementById("noResultsMessage");
+            if (message) {
+                message.remove();
+            }
+        }
     </script>
 </body>
 </html>

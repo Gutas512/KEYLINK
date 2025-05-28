@@ -31,6 +31,10 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+# Endereço IP do seu ESP8266 na rede local
+ESP8266_IP = '192.168.115.28'
+
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -56,6 +60,28 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+AUTH_USER_MODEL = 'Keylink.Funcionario'
+
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'  # Página para redirecionar após o login
+LOGOUT_REDIRECT_URL = '/'  # Página para redirecionar após logout
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'handlers': {
+        'null': {
+            'class': 'logging.NullHandler',
+        },
+    },
+    'loggers': {
+        'django.security.DisallowedHost': {
+            'handlers': ['null'],
+            'propagate': False,
+        },
+    },
+}
 
 ROOT_URLCONF = 'Keylink.urls'
 

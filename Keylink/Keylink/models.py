@@ -1,15 +1,59 @@
-
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.db import models
+from django.utils import timezone
 from django.db import models
 from django.contrib.auth.hashers import make_password, check_password
 from django.utils import timezone
+from django.contrib.auth.models import BaseUserManager
 
-class Funcionario(models.Model):
+class FuncionarioManager(BaseUserManager):
+    def create_user(self, usuario_funcionario, password=None, **extra_fields):
+        if not usuario_funcionario:
+            raise ValueError('O nome de usuário é obrigatório')
+
+        # Verifica campos obrigatórios
+        if 'cpf_funcionario' not in extra_fields:
+            raise ValueError('O CPF é obrigatório')
+
+        user = self.model(
+            usuario_funcionario=usuario_funcionario,
+            **extra_fields
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, usuario_funcionario, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('tipo_usuario', 'admin')
+
+        # Garante que o CPF foi fornecido
+        if 'cpf_funcionario' not in extra_fields:
+            raise ValueError('Superusuário deve ter um CPF')
+
+        return self.create_user(usuario_funcionario, password, **extra_fields)
+
+
+# Adicione ao seu modelo Funcionario:
+objects = FuncionarioManager()
+
+
+class Funcionario(AbstractBaseUser, PermissionsMixin):
     # Opções para tipo_funcionario
     QUADRO = 'Quadro'
     EXTRA_QUADRO = 'Extra Quadro'
     TIPO_CHOICES = [
         (QUADRO, 'Quadro'),
         (EXTRA_QUADRO, 'Extra Quadro'),
+    ]
+
+    # Opções para tipo_usuario
+    USUARIO = 'usuario'
+    ADMIN = 'admin'
+    TIPO_USUARIO_CHOICES = [
+        (USUARIO, 'Usuário'),
+        (ADMIN, 'Administrador'),
     ]
 
     # Campos do modelo
@@ -27,7 +71,20 @@ class Funcionario(models.Model):
         choices=TIPO_CHOICES,
         default=QUADRO,
     )
+    tipo_usuario = models.CharField(
+        max_length=20,
+        choices=TIPO_USUARIO_CHOICES,
+        default=USUARIO,
+    )
     is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+
+    # Campos obrigatórios para User model
+    USERNAME_FIELD = 'usuario_funcionario'
+    REQUIRED_FIELDS = ['nome_funcionario']  # Campos obrigatórios quando cria um superusuário
+
+    objects = FuncionarioManager()
 
     class Meta:
         db_table = 'funcionarios'
@@ -36,8 +93,12 @@ class Funcionario(models.Model):
         verbose_name_plural = 'Funcionários'
         constraints = [
             models.CheckConstraint(
-                check=models.Q(tipo_funcionario__in=['QUADRO', 'EXTRA_QUADRO']),
+                check=models.Q(tipo_funcionario__in=['Quadro', 'Extra Quadro']),
                 name='tipo_funcionario_valido'
+            ),
+            models.CheckConstraint(
+                check=models.Q(tipo_usuario__in=['usuario', 'admin']),
+                name='tipo_usuario_valido'
             )
         ]
 
@@ -70,7 +131,7 @@ class Funcionario(models.Model):
 
 class Chave(models.Model):
     id_chaves = models.AutoField(primary_key=True, db_column='id_chaves')
-    numero_chave = models.CharField(max_length=10)
+    numero_chave = models.CharField(max_length=10, unique=True)
     descricao = models.TextField(null=True, blank=True)
     disponivel = models.BooleanField(default=True)
     data_cadastro = models.DateField(auto_now_add=True)
@@ -90,7 +151,7 @@ class Chave(models.Model):
 
 
 class RegistroSaida(models.Model):
-    id_registro = models.CharField(max_length=45, primary_key=True)
+    id_registro = models.AutoField(primary_key=True)
     chaves = models.ForeignKey(Chave, on_delete=models.CASCADE, related_name="registros_saida")
     funcionario = models.ForeignKey(Funcionario, on_delete=models.CASCADE, related_name="registros_saida")
     registro_saida_horario = models.DateTimeField()
@@ -107,3 +168,5 @@ class RegistroEntrada(models.Model):
 
     def __str__(self):
         return f"Entrada {self.id_registro_entrada} - {self.chaves.numero_chave}"
+
+

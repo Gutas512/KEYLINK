@@ -158,7 +158,7 @@
     <div class="login-container">
         <div class="login-left">
             <div class="login-left-content">
-                <h2>Bem-vindo ao KeyLink!</h2>
+                <h2>Bem-vindo(a) ao KeyLink!</h2>
                 <p>Faça login para acessar o sistema</p>
             </div>
         </div>
@@ -176,7 +176,7 @@
                     <p class="error-message">{{ error }}</p>
                 {% endif %}
 
-                <a href="#" class="forgot-password">Esqueceu sua senha?</a>
+                <a href="{% url 'primeiro_acesso' %}" class="forgot-password">Primeiro acesso? Clique aqui</a>
             </div>
         </div>
     </div>

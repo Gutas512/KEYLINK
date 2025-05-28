@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.hashers import make_password
 from .models import *
+from django.core.exceptions import ValidationError
 
 class ChaveForm(forms.ModelForm):
     class Meta:
@@ -11,17 +12,28 @@ class ChaveForm(forms.ModelForm):
         }
 
 
+    def clean_numero_chave(self):
+        numero_chave = self.cleaned_data.get('numero_chave')
+        if Chave.objects.filter(numero_chave=numero_chave).exists():
+            raise ValidationError("Este número de chave já está cadastrado.")
+        return numero_chave
+
+
+from django import forms
+from django.contrib.auth.hashers import make_password
+from .models import Funcionario
+
+
 class FuncionarioForm(forms.ModelForm):
-    # Campo de senha com widget de password
     senha = forms.CharField(
         widget=forms.PasswordInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Digite a senha'
+            'placeholder': 'Digite a senha (mínimo 8 caracteres)'
         }),
-        label="Senha"
+        label="Senha",
+        required=False  # Tornando opcional para edição
     )
 
-    # Confirmação de senha (opcional)
     confirmar_senha = forms.CharField(
         widget=forms.PasswordInput(attrs={
             'class': 'form-control',
@@ -34,17 +46,19 @@ class FuncionarioForm(forms.ModelForm):
     class Meta:
         model = Funcionario
         fields = [
+            'usuario_funcionario',
             'nome_funcionario',
+            'cpf_funcionario',
             'telefone_funcionario',
             'endereco_funcionario',
             'funcao_funcionario',
-            'cpf_funcionario',
-            'senha',
             'tipo_funcionario',
-            'usuario_funcionario'
+            'tipo_usuario',
+            'is_active',
+            'is_staff',
+            'senha'
         ]
         widgets = {
-            'tipo_funcionario': forms.Select(attrs={'class': 'form-control'}),
             'usuario_funcionario': forms.TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Nome de usuário único'
@@ -57,22 +71,37 @@ class FuncionarioForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': '000.000.000-00'
             }),
+            'tipo_funcionario': forms.Select(attrs={'class': 'form-control'}),
+            'tipo_usuario': forms.Select(attrs={'class': 'form-control'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'is_staff': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
         labels = {
             'usuario_funcionario': 'Usuário',
             'nome_funcionario': 'Nome Completo',
-            'tipo_funcionario': 'Tipo de Funcionário'
+            'tipo_funcionario': 'Tipo de Funcionário',
+            'tipo_usuario': 'Tipo de Usuário',
+            'is_active': 'Ativo',
+            'is_staff': 'Acesso ao Admin'
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Adiciona classes CSS a todos os campos automaticamente
-        for field_name, field in self.fields.items():
-            if field_name not in self.Meta.widgets:
-                field.widget.attrs.update({'class': 'form-control'})
 
-            # Adiciona placeholders
-            if not field.widget.attrs.get('placeholder'):
+        # Configurações específicas para edição vs criação
+        if self.instance.pk:
+            self.fields['senha'].required = False
+            self.fields['confirmar_senha'].required = False
+            self.fields['usuario_funcionario'].disabled = True
+
+        # Adiciona classes CSS e placeholders padrão
+        for field_name, field in self.fields.items():
+            if 'class' not in field.widget.attrs:
+                if not isinstance(field.widget, forms.CheckboxInput):
+                    field.widget.attrs['class'] = 'form-control'
+
+            if not field.widget.attrs.get('placeholder') and not isinstance(field.widget,
+                                                                            (forms.CheckboxInput, forms.Select)):
                 field.widget.attrs['placeholder'] = f'Digite {field.label.lower()}'
 
     def clean(self):
@@ -80,36 +109,33 @@ class FuncionarioForm(forms.ModelForm):
         senha = cleaned_data.get('senha')
         confirmar_senha = cleaned_data.get('confirmar_senha')
 
-        # Validação de confirmação de senha (se o campo existir)
-        if 'confirmar_senha' in self.fields and senha != confirmar_senha:
+        # Validação apenas para criação ou quando senha é fornecida
+        if (not self.instance.pk or senha) and senha != confirmar_senha:
             self.add_error('confirmar_senha', "As senhas não coincidem")
 
         return cleaned_data
 
-    def save(self, commit=True):
-        funcionario = super().save(commit=False)
-        funcionario.set_password(self.cleaned_data['senha'])  # Criptografa a senha
-
-        if commit:
-            funcionario.save()
-        return funcionario
-
-    def save(self, commit=True):
-        # Verificar se a senha foi fornecida e hasheá-la
-        funcionario = super().save(commit=False)
-        if funcionario.senha:
-            funcionario.senha = make_password(funcionario.senha)
-        if commit:
-            funcionario.save()
-        return funcionario
-
-
-
     def clean_senha(self):
         senha = self.cleaned_data.get('senha')
-        if len(senha) < 8:
+        if senha and len(senha) < 8:
             raise forms.ValidationError("A senha deve ter no mínimo 8 caracteres.")
         return senha
+
+    def clean_cpf_funcionario(self):
+        cpf = self.cleaned_data.get('cpf_funcionario')
+        # Aqui você pode adicionar validação de CPF se necessário
+        return cpf
+
+    def save(self, commit=True):
+        funcionario = super().save(commit=False)
+
+        # Apenas atualiza a senha se um novo valor foi fornecido
+        if self.cleaned_data['senha']:
+            funcionario.set_password(self.cleaned_data['senha'])
+
+        if commit:
+            funcionario.save()
+        return funcionario
 
 
 class LoginForm(forms.Form):

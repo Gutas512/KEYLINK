@@ -23,75 +23,98 @@
             });
         });
     </script>
-    <style>
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 98%;
-            background-color: #4d05ab;
-            color: white;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-        }
+<style>
+    .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 98%;
+        background-color: #0072f5; /* Cor base azul */
+        color: white;
+        padding: 15px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 1000;
+    }
 
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 60px; /* Ajustado para ficar abaixo da navbar */
-            width: 250px;
-            height: calc(100% - 60px);
-            background-color: #410491;
-            padding-top: 20px;
-            transition: transform 0.3s ease-in-out;
-            transform: translateX(-250px);
-        }
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            padding: 15px;
-            display: block;
-            text-align: center;
-            transition: 0.3s;
-        }
-        .sidebar a:hover {
-            background-color: #8a3cf0;
-        }
-        .toggle-btn {
-            position: fixed;
-            left: 10px;
-            top: 70px;
-            background-color: #7430cf;
-            color: white;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-            font-size: 20px;
-            border-radius: 4px;
-            z-index: 1001;
-        }
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 60px;
+        width: 250px;
+        height: calc(100% - 60px);
+        background-color: #0061cc; /* Tom mais escuro de azul */
+        padding-top: 20px;
+        transition: transform 0.3s ease-in-out;
+        transform: translateX(-250px);
+    }
 
-        .container {
-            margin-top: 80px;
-            padding-left: 20px;
-        }
+    .sidebar a {
+        color: white;
+        text-decoration: none;
+        padding: 15px;
+        display: block;
+        text-align: center;
+        transition: 0.3s;
+    }
 
-        /* Rodapé */
-        footer {
-            background-color: #4d05ab;
-            color: white;
-            text-align: center;
-            padding: 10px;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            z-index: 1000;
-        }
-    </style>
+    .sidebar a:hover {
+        background-color: #0051b3; /* Tom mais claro */
+    }
+
+    .toggle-btn {
+        position: fixed;
+        left: 10px;
+        top: 70px;
+        background-color: #0042a1; /* Cor mais escura para o botão */
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        font-size: 20px;
+        border-radius: 4px;
+        z-index: 1001;
+    }
+
+    .logo {
+        height: 500px;
+        width: auto;
+        object-fit: contain;
+    }
+
+    .container {
+        margin-top: 80px;
+        padding-left: 20px;
+    }
+
+    footer {
+        background-color: #0072f5; /* Cor base azul */
+        color: white;
+        text-align: center;
+        padding: 10px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+    }
+
+    .logout-btn {
+        background-color: #dc3545; /* Cor vermelha para o botão de sair */
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .logout-btn:hover {
+        background-color: #c82333; /* Tom mais escuro de vermelho */
+    }
+</style>
+
 </head>
 <body>
     <!-- NAVBAR -->
@@ -104,7 +127,7 @@
             </form>
         </div>
         <div class="navbar-right">
-            <img src="{% static 'img/logo.png' %}" alt="Logo KeyLink" class="logo">
+            <img src="{% static 'logo.png' %}" alt="Logo KeyLink" class="logo">
         </div>
     </div>
 
@@ -112,11 +135,16 @@
     <button class="toggle-btn">☰</button>
 
     <!-- SIDEBAR -->
-    <div class="sidebar">
+<div class="sidebar">
+    {% if funcionario.tipo_usuario == 'admin' %}
+
         <a href="{% url 'listar_funcionarios' %}">Funcionários</a>
         <a href="{% url 'listar_chaves' %}">Chaves</a>
         <a href="{% url 'listar_registros' %}">Registros</a>
-    </div>
+    {% else %}
+        <a href="{% url 'listar_chaves' %}">Chaves</a>
+    {% endif %}
+</div>
 
     <!-- CONTEÚDO PRINCIPAL -->
     <div class="container">

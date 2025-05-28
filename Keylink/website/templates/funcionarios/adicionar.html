@@ -25,10 +25,12 @@
             text-align: center;
             margin-bottom: 30px;
         }
+        .form-group {
+            margin-bottom: 15px;
+        }
         .form-control {
             width: 100%;
             padding: 10px;
-            margin-bottom: 15px;
             border: 1px solid #ddd;
             border-radius: 4px;
             box-sizing: border-box;
@@ -60,19 +62,44 @@
             padding: 0;
             margin-top: 5px;
         }
+        /* Estilos para validação de CPF */
+        .valid-cpf {
+            border-color: #28a745 !important;
+        }
+        .invalid-cpf {
+            border-color: #dc3545 !important;
+        }
+        .cpf-error-message {
+            color: #dc3545;
+            font-size: 0.875em;
+            margin-top: 5px;
+            display: none;
+        }
+        .form-text {
+            font-size: 0.875em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Cadastrar Funcionário</h1>
-        
-        <form method="post">
+
+        <form method="post" id="funcionarioForm">
             {% csrf_token %}
-            
+
             {% for field in form %}
                 <div class="form-group">
                     <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }}
+                    {% if field.name == 'cpf' %}
+                        <input type="text" id="id_cpf" name="cpf" class="form-control"
+                               placeholder="000.000.000-00" maxlength="14" required>
+                        <small class="form-text">Formato: 000.000.000-00</small>
+                        <div class="cpf-error-message">CPF inválido. Por favor, verifique o número.</div>
+                    {% else %}
+                        {{ field }}
+                    {% endif %}
                     {% if field.errors %}
                         <ul class="errorlist">
                             {% for error in field.errors %}
@@ -82,10 +109,128 @@
                     {% endif %}
                 </div>
             {% endfor %}
-            
+
             <button type="submit" class="btn-primary">Salvar</button>
             <a href="{% url 'listar_funcionarios' %}" class="back-link">← Voltar</a>
         </form>
     </div>
+
+    <script>
+        // Função para validar CPF
+        function validarCPF(cpf) {
+            cpf = cpf.replace(/\D/g, '');
+
+            // Verifica se tem 11 dígitos e não é uma sequência repetida
+            if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) {
+                return false;
+            }
+
+            // Calcula o primeiro dígito verificador
+            let soma = 0;
+            for (let i = 0; i < 9; i++) {
+                soma += parseInt(cpf.charAt(i)) * (10 - i);
+            }
+            let resto = (soma * 10) % 11;
+            if (resto === 10 || resto === 11) resto = 0;
+            if (resto !== parseInt(cpf.charAt(9))) {
+                return false;
+            }
+
+            // Calcula o segundo dígito verificador
+            soma = 0;
+            for (let i = 0; i < 10; i++) {
+                soma += parseInt(cpf.charAt(i)) * (11 - i);
+            }
+            resto = (soma * 10) % 11;
+            if (resto === 10 || resto === 11) resto = 0;
+            if (resto !== parseInt(cpf.charAt(10))) {
+                return false;
+            }
+
+            return true;
+        }
+
+        // Máscara para CPF
+        document.getElementById('id_cpf').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+
+            if (value.length > 3) {
+                value = value.substring(0, 3) + '.' + value.substring(3);
+            }
+            if (value.length > 7) {
+                value = value.substring(0, 7) + '.' + value.substring(7);
+            }
+            if (value.length > 11) {
+                value = value.substring(0, 11) + '-' + value.substring(11, 13);
+            }
+
+            e.target.value = value.substring(0, 14);
+
+            // Validação em tempo real
+            const cpfInput = e.target;
+            const errorMessage = document.querySelector('.cpf-error-message');
+
+            if (value.replace(/\D/g, '').length === 11) {
+                if (validarCPF(value)) {
+                    cpfInput.classList.remove('invalid-cpf');
+                    cpfInput.classList.add('valid-cpf');
+                    errorMessage.style.display = 'none';
+                } else {
+                    cpfInput.classList.remove('valid-cpf');
+                    cpfInput.classList.add('invalid-cpf');
+                    errorMessage.style.display = 'block';
+                }
+            } else {
+                cpfInput.classList.remove('valid-cpf', 'invalid-cpf');
+                errorMessage.style.display = 'none';
+            }
+        });
+
+        // Validação no envio do formulário
+        document.getElementById('funcionarioForm').addEventListener('submit', function(e) {
+            const cpfInput = document.getElementById('id_cpf');
+            const cpfValue = cpfInput.value.replace(/\D/g, '');
+            const errorMessage = document.querySelector('.cpf-error-message');
+
+            if (cpfValue.length !== 11 || !validarCPF(cpfInput.value)) {
+                e.preventDefault();
+                cpfInput.classList.add('invalid-cpf');
+                errorMessage.style.display = 'block';
+                cpfInput.focus();
+            }
+        });
+
+        // Inicialização - Aplicar máscara se já houver valor (em caso de erro no formulário)
+        document.addEventListener('DOMContentLoaded', function() {
+            const cpfInput = document.getElementById('id_cpf');
+            if (cpfInput.value) {
+                let value = cpfInput.value.replace(/\D/g, '');
+
+                if (value.length > 3) {
+                    value = value.substring(0, 3) + '.' + value.substring(3);
+                }
+                if (value.length > 7) {
+                    value = value.substring(0, 7) + '.' + value.substring(7);
+                }
+                if (value.length > 11) {
+                    value = value.substring(0, 11) + '-' + value.substring(11, 13);
+                }
+
+                cpfInput.value = value.substring(0, 14);
+
+                // Validar CPF existente
+                if (value.replace(/\D/g, '').length === 11) {
+                    const errorMessage = document.querySelector('.cpf-error-message');
+                    if (validarCPF(value)) {
+                        cpfInput.classList.add('valid-cpf');
+                        errorMessage.style.display = 'none';
+                    } else {
+                        cpfInput.classList.add('invalid-cpf');
+                        errorMessage.style.display = 'block';
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>

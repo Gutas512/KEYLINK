@@ -5,44 +5,165 @@
     <meta charset="UTF-8">
     <title>Editar Funcionário</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .cancel-btn {
+            background-color: #f44336;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .password-help {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .checkbox-group input {
+            width: auto;
+            margin-right: 10px;
+        }
+        .errorlist {
+            color: #f44336;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>Editar Funcionário</h1>
+        <h1>{% if form.instance.pk %}Editar{% else %}Adicionar{% endif %} Funcionário</h1>
         
         <form method="POST">
             {% csrf_token %}
+            
+            <!-- Dados Básicos -->
             <div class="form-group">
-                {{ form.nome_funcionario.label }}
+                {{ form.nome_funcionario.label_tag }}
                 {{ form.nome_funcionario }}
+                {{ form.nome_funcionario.errors }}
             </div>
+            
             <div class="form-group">
-                {{ form.usuario_funcionario.label }}
+                {{ form.usuario_funcionario.label_tag }}
                 {{ form.usuario_funcionario }}
+                {% if form.instance.pk %}
+                <small class="password-help">(Não pode ser alterado após criação)</small>
+                {% endif %}
+                {{ form.usuario_funcionario.errors }}
             </div>
+            
             <div class="form-group">
-                {{ form.telefone_funcionario.label }}
-                {{ form.telefone_funcionario }}
-            </div>
-            <div class="form-group">
-                {{ form.endereco_funcionario.label }}
-                {{ form.endereco_funcionario }}
-            </div>
-            <div class="form-group">
-                {{ form.funcao_funcionario.label }}
-                {{ form.funcao_funcionario }}
-            </div>
-            <div class="form-group">
-                {{ form.cpf_funcionario.label }}
+                {{ form.cpf_funcionario.label_tag }}
                 {{ form.cpf_funcionario }}
+                {{ form.cpf_funcionario.errors }}
             </div>
+            
+            <!-- Contato -->
             <div class="form-group">
-                {{ form.senha.label }}
+                {{ form.telefone_funcionario.label_tag }}
+                {{ form.telefone_funcionario }}
+                {{ form.telefone_funcionario.errors }}
+            </div>
+            
+            <div class="form-group">
+                {{ form.endereco_funcionario.label_tag }}
+                {{ form.endereco_funcionario }}
+                {{ form.endereco_funcionario.errors }}
+            </div>
+            
+            <div class="form-group">
+                {{ form.funcao_funcionario.label_tag }}
+                {{ form.funcao_funcionario }}
+                {{ form.funcao_funcionario.errors }}
+            </div>
+            
+            <!-- Senha (só obrigatória para novo usuário) -->
+            <div class="form-group">
+                {{ form.senha.label_tag }}
                 {{ form.senha }}
+                <small class="password-help">Mínimo 8 caracteres (deixe em branco para manter a senha atual)</small>
+                {{ form.senha.errors }}
             </div>
+            
             <div class="form-group">
-                {{ form.tipo_funcionario.label }}
+                {{ form.confirmar_senha.label_tag }}
+                {{ form.confirmar_senha }}
+                {{ form.confirmar_senha.errors }}
+            </div>
+            
+            <!-- Tipo e Permissões -->
+            <div class="form-group">
+                {{ form.tipo_funcionario.label_tag }}
                 {{ form.tipo_funcionario }}
+                {{ form.tipo_funcionario.errors }}
+            </div>
+            
+            <div class="form-group">
+                {{ form.tipo_usuario.label_tag }}
+                {{ form.tipo_usuario }}
+                {{ form.tipo_usuario.errors }}
+            </div>
+            
+            <!-- Permissões Avançadas -->
+            <div class="checkbox-group">
+                {{ form.is_active }}
+                {{ form.is_active.label_tag }}
+                {{ form.is_active.errors }}
+            </div>
+            
+            <div class="checkbox-group">
+                {{ form.is_staff }}
+                {{ form.is_staff.label_tag }}
+                {{ form.is_staff.errors }}
             </div>
 
             <div class="form-actions">
@@ -50,8 +171,6 @@
                 <a href="{% url 'listar_funcionarios' %}" class="cancel-btn">Cancelar</a>
             </div>
         </form>
-
-
     </div>
 </body>
 </html>
