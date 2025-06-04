@@ -1,0 +1,93 @@
+Keylink/Keylink
+urls.py
+
+from django.urls import path
+from website import views
+from website.views import primeiro_acesso
+from django.contrib import admin
+from django.contrib.auth import views as auth_views
+asgi.py
+
+from django.core.asgi import get_asgi_application
+forms.py
+
+from django import forms
+from django.contrib.auth.hashers import make_password
+from .models import *
+from django.core.exceptions import ValidationError
+models.py
+
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.db import models
+from django.utils import timezone
+from django.contrib.auth.hashers import make_password, check_password
+settings.py
+
+from pathlib import Path
+import os
+migrations
+
+from django.db import migrations, models
+from django.conf import settings
+import django.db.models.deletion
+Keylink/website
+apps.py
+
+from django.apps import AppConfig
+admin.py
+
+from django.contrib import admin
+from Keylink.models import Funcionario, RegistroSaida, RegistroEntrada, Chave
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.admin.models import LogEntry
+backends.py
+
+from django.contrib.auth.backends import BaseBackend
+from django.contrib.auth.hashers import check_password
+from Keylink.models import Funcionario
+views.py
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, logout, authenticate
+from django.contrib import messages
+from django.utils import timezone
+from django.contrib.auth.hashers import make_password, check_password
+from django.shortcuts import render, redirect, get_object_or_404
+from Keylink.models import *
+from Keylink.forms import *
+from django.contrib.auth.decorators import user_passes_test
+import requests
+from django.conf import settings
+management/commands/cria_superuser.py
+
+from django.core.management.base import BaseCommand
+from Keylink.models import Funcionario
+management/commands/syncfuncionarios.py
+
+from django.core.management.base import BaseCommand
+from django.contrib.auth.models import User
+from Keylink.models import Funcionario
+management/commands/sync_users.py
+
+from django.core.management.base import BaseCommand
+from django.contrib.auth.models import User
+from Keylink.models import Funcionario
+tests.py
+
+from django.test import TestCase
+Keylink/manage.py
+import os
+import sys
+from django.core.management import execute_from_command_line
+Observações
+O projeto faz grande uso do framework Django e suas bibliotecas internas.
+Outras bibliotecas de terceiros encontradas: requests.
+Muitas importações são relativas, ou de módulos próprios do projeto, como Keylink.models e Keylink.forms.
+
+Código Arduino (Servo_motor/Servo_motor.ino)
+As seguintes bibliotecas estão incluídas:
+
+ESP8266WiFi.h — conexão Wi-Fi para placas ESP8266
+ESP8266WebServer.h — servidor web embarcado para ESP8266
+ArduinoJson.h — manipulação de JSON em dispositivos Arduino
+Servo.h — controle de motores servo
